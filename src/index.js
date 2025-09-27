@@ -1,7 +1,6 @@
 import "./index.css";
 import App from "./App";
 import React from "react";
-import "antd/dist/reset.css";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
 import ReactDOM from "react-dom/client";
