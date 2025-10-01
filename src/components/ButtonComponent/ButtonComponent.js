@@ -2,16 +2,15 @@ import { Button } from "antd";
 
 const ButtonComponent = ({
   size,
-  style: styleButton,
+  styleButton,
   styleTextButton,
-  children,
+  textButton,
   ...rest
 }) => {
   return (
     <Button size={size} style={styleButton} {...rest}>
-      <span style={styleTextButton}>{children}</span>
+      <span style={styleTextButton}>{textButton}</span>
     </Button>
   );
 };
-
 export default ButtonComponent;

@@ -1,10 +1,17 @@
-import { WrapperTypeProduct } from "./style";
+import {
+  WrapperButtonMore,
+  WrapperProducts,
+  WrapperTypeProduct,
+} from "./style";
 import slide1 from "../../assets/Images/slide1.png";
 import slide2 from "../../assets/Images/slide2.png";
 import slide3 from "../../assets/Images/slide3.png";
+
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
-import SliderComponent from "../../components/SliderComponent/SliderComponent";
 import CartComponent from "../../components/CartComponent/CartComponent";
+import SliderComponent from "../../components/SliderComponent/SliderComponent";
+
+
 const HomePage = () => {
   const arr = ["TV", "Mobile", "Laptop", "Tablet", "Watch", "Camera"];
   return (
@@ -17,18 +24,43 @@ const HomePage = () => {
         </WrapperTypeProduct>
         <div
           id="container"
-          style={{ backgroundColor: "#efefef", height: "1000px" }}
+          style={{
+            backgroundColor: "#efefef",
+            height: "1000px",
+            width: "100%",
+          }}
         >
           <SliderComponent arrImages={[slide1, slide2, slide3]} />
+          <WrapperProducts>
+            <CartComponent />
+            <CartComponent />
+            <CartComponent />
+            <CartComponent />
+          </WrapperProducts>
           <div
             style={{
-              marginTop: "20px",
+              width: "100%",
               display: "flex",
-              gap: "20px",
+              justifyContent: "center",
+              marginTop: "10px",
             }}
           >
-            <CartComponent />
+            <WrapperButtonMore
+              textButton="Xem Thêm"
+              type="outline"
+              styleButton={{
+                border: "1px solid rgb(13, 92, 182)",
+                color: "rgb(13, 92, 182)",
+                marginTop: "20px",
+                width: "240px",
+                height: "38px",
+                fontSize: "16px",
+                borderRadius: "4px",
+              }}
+              styleTextButton={{ fontWeight: 500 }}
+            />
           </div>
+          {/* <NavBarComponent /> */}
         </div>
         <TypeProduct />
       </div>
