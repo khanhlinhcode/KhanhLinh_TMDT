@@ -23,7 +23,8 @@ const SliderComponent = ({ arrImages }) => {
               boxSizing: "border-box",
             }}
           >
-            <Image
+            <Image 
+              key={index}
               src={item}
               alt="slide image"
               preview={false}
