@@ -5,19 +5,14 @@ import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 function App() {
-  // useEffect(() => {
-  //   fetchapi();
-  // }, []);
-  // console.log("API URL:", process.env.REACT_APP_BACKEND_API_URL);
-
-  const fetchapi = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_URL}/product/get-all`
-    );
-    return res.data;
-  };
-  const query = useQuery({ queryKey: ["todos"], queryFn: fetchapi });
-  console.log(query.data);
+  // const fetchapi = async () => {
+  //   const res = await axios.get(
+  //     `${process.env.REACT_APP_API_URL}/product/get-all`
+  //   );
+  //   return res.data;
+  // };
+  // const query = useQuery({ queryKey: ["todos"], queryFn: fetchapi });
+  // console.log(query.data);
 
   return (
     <div>

@@ -5,10 +5,18 @@ const ButtonComponent = ({
   styleButton,
   styleTextButton,
   textButton,
+  disabled,
   ...rest
 }) => {
   return (
-    <Button size={size} style={styleButton} {...rest}>
+    <Button
+      style={{
+        ...styleButton,
+        background: disabled ? "#e5e5e5" : styleButton?.background,
+      }}
+      size={size}
+      {...rest}
+    >
       <span style={styleTextButton}>{textButton}</span>
     </Button>
   );

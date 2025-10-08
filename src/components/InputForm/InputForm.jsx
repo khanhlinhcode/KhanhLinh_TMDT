@@ -1,31 +1,19 @@
-import React, { useState } from "react";
-import { WrapperInputStyle, WrapperPasswordStyle } from "./style";
+import { WrapperInputStyle } from "./style";
 
 const InputForm = (props) => {
-  const [valueInput, setValueInput] = useState("");
-  const { placeholder = "Nhập Text", type = "text", ...rests } = props;
-
-  if (type === "password") {
-    return (
-      <WrapperPasswordStyle
-        placeholder={placeholder}
-        value={valueInput}
-        onChange={(e) => setValueInput(e.target.value)}
-        {...rests}
-      />
-    );
-  }
-
+  const { placeholder = "Nhập Text", ...rests } = props;
+  const handleOnchangeInput = (e) => {
+    props.onChange(e.target.value);
+    console.log("value", e.target.value);
+  };
   return (
-    <>
-      <WrapperInputStyle
-        placeholder={placeholder}
-        value={valueInput}
-        onChange={(e) => setValueInput(e.target.value)}
-        {...rests}
-      ></WrapperInputStyle>
-    </>
+    <WrapperInputStyle
+      placeholder={placeholder}
+      value={props.value}
+      {...rests}
+      onChange={handleOnchangeInput}
+    ></WrapperInputStyle>
   );
 };
 
-export default InputForm; 
+export default InputForm;
