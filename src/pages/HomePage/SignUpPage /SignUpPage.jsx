@@ -1,5 +1,5 @@
-import React from "react";
-import { Image } from "antd";
+import React, { useEffect } from "react";
+import { Image, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import ImageSignIn from "../../../assets/Images/sign-in.png";
 import * as UserService from "../../../services/UserService";
@@ -7,6 +7,7 @@ import InputForm from "../../../components/InputForm/InputForm";
 import { useMutationnHook } from "../../../hooks/useMutationHook";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import Loading from "../../../components/LoadingComponent/Loading";
+import { success, error, warning } from "../../../components/Message/Message";
 import ButtonComponent from "../../../components/ButtonComponent/ButtonComponent";
 
 import {
@@ -32,9 +33,17 @@ const SignUpPage = () => {
   const mutation = useMutationnHook((data) => UserService.signupUser(data));
   console.log("mutation", mutation);
 
-  const { data, isPending: isLoading = false } = mutation;
-  // set input password
+  const { data, isPending: isLoading = false, isSuccess, isError } = mutation;
+  useEffect(() => {
+    if (isSuccess) {
+      message.success();
+      handleNavigateSignIn();
+    } else {
+      message.error();
+    }
+  }, [isSuccess, isError]);
 
+  // set input password
   const handleOnchangePassword = (value) => {
     setPassword(value);
   };
