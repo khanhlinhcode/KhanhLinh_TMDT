@@ -1,0 +1,221 @@
+import React, { useEffect, useState } from "react";
+import {
+  WrapperContentProfile,
+  WrapperHeader,
+  WrapperInput,
+  WrapperLabel,
+} from "./style";
+import InputForm from "../../components/InputForm/InputForm";
+import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
+import { useDispatch, useSelector } from "react-redux";
+import * as UserService from "../../../src/services/UserService";
+import { useMutationnHook } from "../../hooks/useMutationHook";
+import Loading from "../../components/LoadingComponent/Loading";
+import { message } from "antd";
+import { updateUser } from "../../redux/slide/userSlide";
+
+const ProfilePage = () => {
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [avatar, setAvatar] = useState("");
+
+  const mutation = useMutationnHook((id, data) =>
+    UserService.updateUser(id, data)
+  );
+  const { data, isPending: isLoading = false, isSuccess, isError } = mutation;
+  console.log("data", data);
+
+  useEffect(() => {
+    setEmail(user?.email);
+    setName(user?.name);
+    setPhone(user?.phone);
+    setAddress(user?.address);
+    setAvatar(user?.avatar);
+  }, [user]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      message.success();
+      handleGetDetailsUser(user?.id, user?.access_token);
+    } else if (isError) {
+      message.error();
+    }
+  }, [isSuccess, isError]);
+  const handleGetDetailsUser = async (id, token) => {
+    const res = await UserService.getDetailUser(id, token);
+    dispatch(updateUser({ ...res?.data, access_token: token }));
+  };
+
+  const handleOnchageEmail = (value) => {
+    setEmail(value);
+  };
+
+  const handleOnchageName = (value) => {
+    setName(value);
+  };
+
+  const handleOnchagePhone = (value) => {
+    setPhone(value);
+  };
+
+  const handleOnchageAdress = (value) => {
+    setAddress(value);
+  };
+
+  const handleOnchageAvatar = (value) => {
+    setAvatar(value.target.value);
+  };
+
+  const handleUpdate = () => {
+    mutation.mutate(user?.id, { email, name, phone, address, avatar });
+    if (isSuccess) {
+      message.success();
+    } else if (isError) {
+      message.error();
+    }
+    console.log("update", email, name, phone, address, avatar);
+  };
+
+  return (
+    <div style={{ width: "1270px", margin: "0 auto", height: "500px" }}>
+      <WrapperHeader>Thông tin Người Dùng</WrapperHeader>
+      <Loading isLoading={isLoading}>
+        <WrapperContentProfile>
+          <WrapperInput>
+            <WrapperLabel htmlFor="name">Name</WrapperLabel>
+            <InputForm
+              style={{ width: "300px" }}
+              id="email"
+              value={name}
+              onChange={handleOnchageName}
+            />
+            <ButtonComponent
+              onClick={handleUpdate}
+              size="large"
+              styleButton={{
+                height: "30px",
+                width: "fit-content",
+                borderRadius: "4px",
+                padding: "2px 6px 6px",
+              }}
+              textButton={"Cập nhật"}
+              styleTextButton={{
+                color: "rgb(26,148,255)",
+                fontSize: "15px",
+                fontWeight: "700",
+              }}
+            />
+          </WrapperInput>
+          <WrapperInput>
+            <WrapperLabel htmlFor="email">Email</WrapperLabel>
+            <InputForm
+              style={{ width: "300px" }}
+              id="email"
+              value={email}
+              onChange={handleOnchageEmail}
+            />
+            <ButtonComponent
+              onClick={handleUpdate}
+              size="large"
+              styleButton={{
+                height: "30px",
+                width: "fit-content",
+                borderRadius: "4px",
+                padding: "2px 6px 6px",
+              }}
+              textButton={"Cập nhật"}
+              styleTextButton={{
+                color: "rgb(26,148,255)",
+                fontSize: "15px",
+                fontWeight: "700",
+              }}
+            />
+          </WrapperInput>
+
+          <WrapperInput>
+            <WrapperLabel htmlFor="phone">Phone</WrapperLabel>
+            <InputForm
+              style={{ width: "300px" }}
+              id="phone"
+              value={phone}
+              onChange={handleOnchagePhone}
+            />
+            <ButtonComponent
+              onClick={handleUpdate}
+              size="large"
+              styleButton={{
+                height: "30px",
+                width: "fit-content",
+                borderRadius: "4px",
+                padding: "2px 6px 6px",
+              }}
+              textButton={"Cập nhật"}
+              styleTextButton={{
+                color: "rgb(26,148,255)",
+                fontSize: "15px",
+                fontWeight: "700",
+              }}
+            />
+          </WrapperInput>
+          <WrapperInput>
+            <WrapperLabel htmlFor="address">Address</WrapperLabel>
+            <InputForm
+              style={{ width: "300px" }}
+              id="address"
+              value={address}
+              onChange={handleOnchageAdress}
+            />
+            <ButtonComponent
+              onClick={handleUpdate}
+              size="large"
+              styleButton={{
+                height: "30px",
+                width: "fit-content",
+                borderRadius: "4px",
+                padding: "2px 6px 6px",
+              }}
+              textButton={"Cập nhật"}
+              styleTextButton={{
+                color: "rgb(26,148,255)",
+                fontSize: "15px",
+                fontWeight: "700",
+              }}
+            />
+          </WrapperInput>
+
+          <WrapperInput>
+            <WrapperLabel htmlFor="avatar">Avatar</WrapperLabel>
+            <InputForm
+              style={{ width: "300px" }}
+              id="avatar"
+              value={avatar}
+              onChange={handleOnchageAvatar}
+            />
+            <ButtonComponent
+              onClick={handleUpdate}
+              size="large"
+              styleButton={{
+                height: "30px",
+                width: "fit-content",
+                borderRadius: "4px",
+                padding: "2px 6px 6px",
+              }}
+              textButton={"Cập nhật"}
+              styleTextButton={{
+                color: "rgb(26,148,255)",
+                fontSize: "15px",
+                fontWeight: "700",
+              }}
+            />
+          </WrapperInput>
+        </WrapperContentProfile>
+      </Loading>
+    </div>
+  );
+};
+
+export default ProfilePage;

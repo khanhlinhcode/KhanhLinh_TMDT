@@ -41,3 +41,41 @@ export const getDetailUser = async (id, access_token) => {
     throw error;
   }
 };
+export const refreshToken = async () => {
+  try {
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/user/refresh-token`,
+      {
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("refresh token error:", error.response?.data);
+    throw error;
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/user/log-out`
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Logout user error:", error.response?.data);
+    throw error;
+  }
+};
+export const updateUser = async (id, data) => {
+  try {
+    const res = await axios.put(
+      `${process.env.REACT_APP_API_URL}/user/update-user/${id}`,
+      data
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Update user error:", error.response?.data);
+    throw error;
+  }
+};

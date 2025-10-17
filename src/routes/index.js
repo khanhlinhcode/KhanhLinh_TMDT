@@ -4,7 +4,8 @@ import SignInPage from "../pages/HomePage/SignInPage/SignInPage";
 import SignUpPage from "../pages/HomePage/SignUpPage /SignUpPage";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import OrderPage from "../pages/OrderPage/OrderPage";
-import ProductsPage from "../pages/ProductsPage/ProductsPage";
+import ProductsPage from "../pages/ProductsPage/ProductsPage.jsx";
+import ProfilePage from "../pages/Profile/ProfilePage.jsx";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
 
 const routes = [
@@ -36,11 +37,16 @@ const routes = [
   {
     path: "/sign-up",
     component: SignUpPage,
-    isShowHeader: false ,
+    isShowHeader: false,
   },
   {
     path: "/product-details",
     component: ProductDetailPage,
+    isShowHeader: true,
+  },
+  {
+    path: "/profile-user",
+    component: ProfilePage,
     isShowHeader: true,
   },
 
