@@ -23,9 +23,11 @@ const ProfilePage = () => {
   const [address, setAddress] = useState("");
   const [avatar, setAvatar] = useState("");
 
-  const mutation = useMutationnHook((id, data) =>
-    UserService.updateUser(id, data)
-  );
+  const mutation = useMutationnHook((data) => {
+    const { id, access_token, ...rests } = data;
+    return UserService.updateUser(id, rests, access_token);
+  });
+
   const { data, isPending: isLoading = false, isSuccess, isError } = mutation;
   console.log("data", data);
 
@@ -39,15 +41,18 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      message.success();
+      message.success("Cập nhật thông tin thành công");
       handleGetDetailsUser(user?.id, user?.access_token);
     } else if (isError) {
-      message.error();
+      message.error("Cập nhật thất bại");
     }
   }, [isSuccess, isError]);
+
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
+    if (res?.status === "SUCCESS") {
+      dispatch(updateUser({ ...res?.data, access_token: token }));
+    }
   };
 
   const handleOnchageEmail = (value) => {
@@ -71,12 +76,15 @@ const ProfilePage = () => {
   };
 
   const handleUpdate = () => {
-    mutation.mutate(user?.id, { email, name, phone, address, avatar });
-    if (isSuccess) {
-      message.success();
-    } else if (isError) {
-      message.error();
-    }
+    mutation.mutate({
+      id: user?.id,
+      email,
+      name,
+      phone,
+      address,
+      avatar,
+      access_token: user?.access_token,
+    });
     console.log("update", email, name, phone, address, avatar);
   };
 

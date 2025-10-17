@@ -16,12 +16,13 @@ import ButtonInputSearch from "../ButtonInputSearch/ButtonInputSearch";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { resetUser } from "../../redux/slide/userSlide";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../LoadingComponent/Loading";
 
 const Headercomponent = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user);
   const handleNavigateLogin = () => {
@@ -39,6 +40,13 @@ const Headercomponent = () => {
     }
   };
   console.log("user", user);
+
+  useEffect(() => {
+    setLoading(true);
+    setUserName(user?.name);
+    setLoading(false);
+  }, [user.name]);
+
   const content = (
     <div>
       <WrapperContentPopup onClick={handleLogout}>
@@ -83,7 +91,7 @@ const Headercomponent = () => {
                 <>
                   <Popover content={content} trigger="click">
                     <div style={{ cursor: "pointer" }}>
-                      {user?.name?.length > 2 ? user.name : "User"}
+                      {userName?.length > 2 ? userName : "User"}
                     </div>
                   </Popover>
                 </>
