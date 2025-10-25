@@ -10,10 +10,23 @@ import slide3 from "../../assets/Images/slide3.png";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import CartComponent from "../../components/CartComponent/CartComponent";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
-
+import { useQuery } from "@tanstack/react-query";
+import * as ProductService from "../../services/ProductService";
 
 const HomePage = () => {
   const arr = ["TV", "Mobile", "Laptop", "Tablet", "Watch", "Camera"];
+  const fetchProductAll = async () => {
+    const res = await ProductService.getAllProduct();
+    console.log("res", res);
+    return res;
+  };
+  const { data: products } = useQuery({
+    queryKey: ["products"],
+    queryFn: fetchProductAll,
+    retry: 3,
+    retryDelay: 1000,
+  });
+  console.log("data", products);
   return (
     <>
       <div style={{ padding: "0 120px" }}>
@@ -32,10 +45,22 @@ const HomePage = () => {
         >
           <SliderComponent arrImages={[slide1, slide2, slide3]} />
           <WrapperProducts>
-            <CartComponent />
-            <CartComponent />
-            <CartComponent />
-            <CartComponent />
+            {products?.data?.map((product) => {
+              return (
+                <CartComponent
+                  key={product._id}
+                  countInStock={product.countInStock}
+                  description={product.description}
+                  image={product.image}
+                  name={product.name}
+                  price={product.price}
+                  rating={product.rating}
+                  type={product.type}
+                  selled={product.selled}
+                  discount={product.discount}
+                />
+              );
+            })}
           </WrapperProducts>
           <div
             style={{

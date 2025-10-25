@@ -1,5 +1,9 @@
 import axios from "axios";
 
+export const axiosJWT = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+});
+
 export const loginUser = async (data) => {
   try {
     const res = await axios.post(
@@ -80,7 +84,7 @@ export const updateUser = async (id, data, access_token) => {
     );
     return res.data;
   } catch (error) {
-    console.error("Update user error:", error.response?.data);
+    console.error("Update user error:", error.response?.data || error.message);
     throw error;
   }
 };

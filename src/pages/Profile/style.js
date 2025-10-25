@@ -1,3 +1,4 @@
+import { Upload } from "antd";
 import styled from "styled-components";
 
 export const WrapperHeader = styled.h1`
@@ -32,4 +33,15 @@ export const WrapperInput = styled.div`
   align-items: center;
   gap: 10px; /* thêm khoảng cách giữa input và button */
   padding: 8px 0;
+`;
+export const WrapperUploadFile = styled(Upload)`
+  &.ant-upload.ant-upload-select.ant-upload-select-picture-card {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+
+  & .ant-upload-list-item-info {
+    display: none;
+  }
 `;

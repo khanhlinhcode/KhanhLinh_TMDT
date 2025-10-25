@@ -4,6 +4,7 @@ import {
   WrapperHeader,
   WrapperInput,
   WrapperLabel,
+  WrapperUploadFile,
 } from "./style";
 import InputForm from "../../components/InputForm/InputForm";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
@@ -11,8 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 import * as UserService from "../../../src/services/UserService";
 import { useMutationnHook } from "../../hooks/useMutationHook";
 import Loading from "../../components/LoadingComponent/Loading";
-import { message } from "antd";
+import { Button, message } from "antd";
 import { updateUser } from "../../redux/slide/userSlide";
+import { UploadOutlined } from "@ant-design/icons";
+import { getBase64 } from "../../utils";
 
 const ProfilePage = () => {
   const user = useSelector((state) => state.user);
@@ -71,8 +74,12 @@ const ProfilePage = () => {
     setAddress(value);
   };
 
-  const handleOnchageAvatar = (value) => {
-    setAvatar(value.target.value);
+  const handleOnchageAvatar = async ({ fileList }) => {
+    const file = fileList[0];
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setAvatar(file.preview);
   };
 
   const handleUpdate = () => {
@@ -197,12 +204,22 @@ const ProfilePage = () => {
 
           <WrapperInput>
             <WrapperLabel htmlFor="avatar">Avatar</WrapperLabel>
-            <InputForm
-              style={{ width: "300px" }}
-              id="avatar"
-              value={avatar}
-              onChange={handleOnchageAvatar}
-            />
+            <WrapperUploadFile onChange={handleOnchageAvatar} maxCount={1}>
+              <Button icon={<UploadOutlined />}>Selection File</Button>
+            </WrapperUploadFile>
+
+            {avatar && (
+              <img
+                src={avatar}
+                style={{
+                  height: "60px",
+                  width: "60px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+                alt="avatar"
+              />
+            )}
             <ButtonComponent
               onClick={handleUpdate}
               size="large"

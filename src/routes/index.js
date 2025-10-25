@@ -1,3 +1,4 @@
+import AdminPage from "../pages/AdminPage/AdminPage.jsx";
 import HomePage from "../pages/HomePage/HomePage";
 import ProductDetailPage from "../pages/HomePage/ProductDetailsPage/ProductDetailsPage";
 import SignInPage from "../pages/HomePage/SignInPage/SignInPage";
@@ -48,6 +49,12 @@ const routes = [
     path: "/profile-user",
     component: ProfilePage,
     isShowHeader: true,
+  },
+  {
+    path: "/system/admin",
+    component: AdminPage,
+    isShowHeader: false,
+    isPrivate: true,
   },
 
   {

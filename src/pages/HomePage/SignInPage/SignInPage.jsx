@@ -46,7 +46,8 @@ const SignInPage = () => {
 
   const handleGetDetailsUser = async (id, token) => {
     const res = await UserService.getDetailUser(id, token);
-    dispatch(updateUser({ ...res?.data, access_token: token }));
+    dispatch(updateUser({ ...res?.data?.data, access_token: token }));
+    console.log("getDetailUser response:", res);
   };
 
   const handleOnchangeEmail = (value) => {

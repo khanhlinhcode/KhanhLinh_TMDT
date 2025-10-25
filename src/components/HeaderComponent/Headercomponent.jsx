@@ -19,10 +19,11 @@ import { resetUser } from "../../redux/slide/userSlide";
 import { useEffect, useState } from "react";
 import Loading from "../LoadingComponent/Loading";
 
-const Headercomponent = () => {
+const Headercomponent = ({ isHiddentSearch = false, isHiddenCart = false }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userName, setUserName] = useState("");
+  const [userAvatar, setUserAvatar] = useState("");
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user);
   const handleNavigateLogin = () => {
@@ -44,16 +45,22 @@ const Headercomponent = () => {
   useEffect(() => {
     setLoading(true);
     setUserName(user?.name);
+    setUserAvatar(user?.avatar);
     setLoading(false);
-  }, [user.name]);
+  }, [user.name, user?.avatar]);
 
   const content = (
     <div>
-      <WrapperContentPopup onClick={handleLogout}>
-        Đăng xuất
-      </WrapperContentPopup>
+      {user?.isAdmin && (
+        <WrapperContentPopup onClick={() => navigate("/system/admin")}>
+          Quản lý hệ thống
+        </WrapperContentPopup>
+      )}
       <WrapperContentPopup onClick={() => navigate("/profile-user")}>
         Thông tin người dùng
+      </WrapperContentPopup>
+      <WrapperContentPopup onClick={handleLogout}>
+        Đăng xuất
       </WrapperContentPopup>
     </div>
   );
@@ -61,20 +68,28 @@ const Headercomponent = () => {
 
   return (
     <div>
-      <WrapperHeader gutter={16}>
-        <Col span={6}>
+      <WrapperHeader
+        gutter={16}
+        style={{
+          justifyContent:
+            isHiddentSearch && isHiddentSearch ? "space-between" : "unset",
+        }}
+      >
+        <Col span={5}>
           <WrapperTextHeader>
             KHANHLINHCODE <br />
             Lập Trình ReactJS
           </WrapperTextHeader>
         </Col>
-        <Col span={12}>
-          <ButtonInputSearch
-            size="large"
-            placeholder="Tìm kiếm sản phẩm, danh mục hay thương hiệu mong muốn ..."
-            textButton="Tìm Kiếm"
-          />
-        </Col>
+        {!isHiddentSearch && (
+          <Col span={13}>
+            <ButtonInputSearch
+              size="large"
+              placeholder="Tìm kiếm sản phẩm, danh mục hay thương hiệu mong muốn ..."
+              textButton="Tìm Kiếm"
+            />
+          </Col>
+        )}
         <Col
           span={6}
           style={{
@@ -86,12 +101,29 @@ const Headercomponent = () => {
         >
           <Loading isLoading={loading}>
             <WrapperHeaderAccount>
-              <UserOutlined style={{ fontSize: "25px" }} />
+              {userAvatar ? (
+                <img
+                  src={userAvatar}
+                  alt="avatar"
+                  style={{
+                    height: "40px",
+                    width: "40px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <UserOutlined style={{ fontSize: "25px" }} />
+              )}
               {user?.access_token ? (
                 <>
-                  <Popover content={content} trigger="click">
+                  <Popover
+                    content={content}
+                    trigger="click"
+                    style={{ float: "right" }}
+                  >
                     <div style={{ cursor: "pointer" }}>
-                      {userName?.length > 2 ? userName : "User"}
+                      {userName?.length > 2 ? userName : user?.email}
                     </div>
                   </Popover>
                 </>
@@ -111,14 +143,15 @@ const Headercomponent = () => {
               )}
             </WrapperHeaderAccount>
           </Loading>
-          <WrapperHeaderAccount>
+          {!isHiddenCart && (
             <div>
               <Badge count={4}>
                 <ShoppingCartOutlined style={{ fontSize: "25px" }} />
               </Badge>
               <WrapperTextHeaderSmall>Giỏ Hàng</WrapperTextHeaderSmall>
             </div>
-          </WrapperHeaderAccount>
+          )}
+          <WrapperHeaderAccount></WrapperHeaderAccount>
         </Col>
       </WrapperHeader>
     </div>

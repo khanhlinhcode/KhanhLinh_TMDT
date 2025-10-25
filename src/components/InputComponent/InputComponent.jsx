@@ -7,6 +7,7 @@ const InputComponent = ({ size, placeholder, style, ...rests }) => {
       allowClear
       placeholder={placeholder}
       style={{ ...style, border: "none", borderRadius: 0 }}
+      {...rests}
     />
   );
 };
