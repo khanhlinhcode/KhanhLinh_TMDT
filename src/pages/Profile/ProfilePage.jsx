@@ -207,7 +207,6 @@ const ProfilePage = () => {
             <WrapperUploadFile onChange={handleOnchageAvatar} maxCount={1}>
               <Button icon={<UploadOutlined />}>Selection File</Button>
             </WrapperUploadFile>
-
             {avatar && (
               <img
                 src={avatar}

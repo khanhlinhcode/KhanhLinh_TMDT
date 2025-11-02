@@ -6,7 +6,6 @@ import { getItem } from "../../utils";
 import Headercomponent from "../../components/HeaderComponent/Headercomponent";
 import AdminUser from "../../components/AdminUSer/AdminUser";
 import AdminProduct from "../../components/AdminProduct/AdminProduct";
-import { render } from "@testing-library/react";
 
 const AdminPage = () => {
   const items = [
@@ -39,7 +38,6 @@ const AdminPage = () => {
           mode="inline"
           style={{
             width: 256,
-            height: "100vh",
             boxShadow: "1px 1px 2px #ccc",
           }}
           items={items}
