@@ -25,3 +25,33 @@ export const createProduct = async (data) => {
   }
 };
 console.log("API URL:", `${process.env.REACT_APP_API_URL}/product/create`);
+
+export const getDetailsProducts = async (id) => {
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_URL}/product/get-details/${id}`,
+      id
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Logout user error:", error.response?.data);
+    throw error;
+  }
+};
+export const UpdateProduct = async (id, access_token, data) => {
+  try {
+    const res = await axios.put(
+      `${process.env.REACT_APP_API_URL}/product/update/${id}`,
+      data,
+      {
+        headers: {
+          token: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Logout user error:", error.response?.data);
+    throw error;
+  }
+};
