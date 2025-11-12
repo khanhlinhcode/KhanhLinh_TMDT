@@ -55,3 +55,21 @@ export const UpdateProduct = async (id, access_token, data) => {
     throw error;
   }
 };
+
+export const deleteProduct = async (id, access_token) => {
+  try {
+    const res = await axios.delete(
+      `${process.env.REACT_APP_API_URL}/product/delete/${id}`,
+
+      {
+        headers: {
+          token: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Logout user error:", error.response?.data);
+    throw error;
+  }
+};
