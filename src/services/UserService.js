@@ -41,10 +41,44 @@ export const getDetailUser = async (id, access_token) => {
     );
     return res.data;
   } catch (error) {
-    console.error("SignUp error:", error.response?.data);
+    console.error("getDetailUser error:", error.response?.data);
     throw error;
   }
 };
+export const deleteUser = async (id, access_token) => {
+  try {
+    const res = await axios.delete(
+      `${process.env.REACT_APP_API_URL}/user/delete-user/${id}`,
+      {
+        headers: {
+          token: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("deleteUser error:", error.response?.data);
+    throw error;
+  }
+};
+
+export const getAllUser = async (access_token) => {
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_URL}/user/getAll`,
+      {
+        headers: {
+          token: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("getAlluser error:", error.response?.data);
+    throw error;
+  }
+};
+
 export const refreshToken = async () => {
   try {
     const res = await axios.post(
@@ -71,6 +105,7 @@ export const logoutUser = async () => {
     throw error;
   }
 };
+
 export const updateUser = async (id, data, access_token) => {
   try {
     const res = await axios.put(

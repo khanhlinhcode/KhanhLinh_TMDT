@@ -53,7 +53,8 @@ const AdminProduct = () => {
     rating: "",
   });
 
-  const [form] = Form.useForm();
+  const [formCreate] = Form.useForm();
+  const [formUpdate] = Form.useForm();
 
   //{======================== useMutation====================}
   const mutation = useMutationnHook((data) => {
@@ -71,8 +72,8 @@ const AdminProduct = () => {
   });
   console.log("rowSelected", rowSelected);
   const mutationUpdate = useMutationnHook((data) => {
-    const { id, token, ...rests } = data;
-    return ProductService.UpdateProduct(id, token, { ...rests });
+    const { id, token, body } = data;
+    return ProductService.UpdateProduct(id, token, body);
   });
 
   const mutationDeleted = useMutationnHook((data) => {
@@ -107,8 +108,8 @@ const AdminProduct = () => {
     return res;
   };
   useEffect(() => {
-    form.setFieldsValue(stateProductDetails);
-  }, [form, stateProductDetails]);
+    formUpdate.setFieldsValue(stateProductDetails);
+  }, [formUpdate, stateProductDetails]);
 
   //{======================== handleDetailProduct====================}
   const handleDetailProduct = async (id) => {
@@ -150,11 +151,17 @@ const AdminProduct = () => {
       <div>
         <DeleteOutlined
           style={{ color: "red", fontSize: "30px", cursor: "pointer" }}
-          onClick={() => setIsModalopenDelete(true)}
+          onClick={() => {
+            setRowSelected(record._id);
+            setIsModalopenDelete(true);
+          }}
         />
         <EditOutlined
           style={{ color: "orange", fontSize: "30px", cursor: "pointer" }}
-          onClick={() => handleDetailProduct(record._id)}
+          onClick={() => {
+            setRowSelected(record._id);
+            handleDetailProduct(record._id);
+          }}
         />
       </div>
     );
@@ -365,7 +372,7 @@ const AdminProduct = () => {
       description: "",
       rating: "",
     });
-    form.resetFields();
+    formUpdate.resetFields();
   };
 
   useEffect(() => {
@@ -409,7 +416,7 @@ const AdminProduct = () => {
       description: "",
       rating: "",
     });
-    form.resetFields();
+    formCreate.resetFields();
   };
 
   const onFinish = () => {
@@ -463,7 +470,7 @@ const AdminProduct = () => {
       {
         id: rowSelected,
         token: user?.access_token,
-        ...stateProductDetails, // giữ nguyên
+        body: { ...stateProductDetails },
       },
       {
         onSettled: () => {
@@ -489,6 +496,7 @@ const AdminProduct = () => {
           <PlusOutlined style={{ fontSize: "60px" }} />
         </Button>
       </div>
+
       <div style={{ marginTop: "20px" }}>
         <TableComponent
           columns={columns}
@@ -504,8 +512,10 @@ const AdminProduct = () => {
           dayd
         />
       </div>
+
       {/*========= taọ san pham===== */}
       <ModalComponent
+        forceRender
         title="Tạo sản phẩm"
         open={isModalOpen}
         onCancel={handleCancel}
@@ -521,15 +531,15 @@ const AdminProduct = () => {
             wrapperCol={{ span: 18 }}
             onFinish={onFinish}
             autoComplete="on"
-            form={form}
+            form={formCreate}
           >
             <Form.Item
               label="Name"
-              name="Name"
+              name="name"
               rules={[{ required: true, message: "Please input your name!" }]}
             >
               <InputComponent
-                value={""}
+                value={stateProduct.name}
                 onChange={handleOnchange}
                 name="name"
               />
@@ -537,7 +547,7 @@ const AdminProduct = () => {
 
             <Form.Item
               label="Type"
-              name="Type"
+              name="type"
               rules={[{ required: true, message: "Please input your Type!" }]}
             >
               <InputComponent
@@ -549,7 +559,7 @@ const AdminProduct = () => {
 
             <Form.Item
               label="count inStock"
-              name="count inStock"
+              name="countInStock"
               rules={[
                 { required: true, message: "Please input your count InStock!" },
               ]}
@@ -563,7 +573,7 @@ const AdminProduct = () => {
 
             <Form.Item
               label="Price"
-              name="Price"
+              name="price"
               rules={[
                 { required: true, message: "Please input your count Price!" },
               ]}
@@ -577,7 +587,7 @@ const AdminProduct = () => {
 
             <Form.Item
               label="Rating"
-              name="Rating"
+              name="rating"
               rules={[
                 { required: true, message: "Please input your count Rating!" },
               ]}
@@ -658,18 +668,14 @@ const AdminProduct = () => {
             wrapperCol={{ span: 22 }}
             onFinish={onUpdateProduct}
             autoComplete="on"
-            form={form}
+            form={formUpdate}
           >
             <Form.Item
               label="Name"
               name="name"
               rules={[{ required: true, message: "Please input your name!" }]}
             >
-              <InputComponent
-                value={""}
-                onChange={handleOnchangeDetails}
-                name="name"
-              />
+              <InputComponent onChange={handleOnchangeDetails} name="name" />
             </Form.Item>
 
             <Form.Item
@@ -677,11 +683,7 @@ const AdminProduct = () => {
               name="type"
               rules={[{ required: true, message: "Please input your Type!" }]}
             >
-              <InputComponent
-                value={stateProductDetails.type}
-                onChange={handleOnchangeDetails}
-                name="type"
-              />
+              <InputComponent onChange={handleOnchangeDetails} name="type" />
             </Form.Item>
 
             <Form.Item
@@ -692,7 +694,6 @@ const AdminProduct = () => {
               ]}
             >
               <InputComponent
-                value={stateProductDetails.countInStock}
                 onChange={handleOnchangeDetails}
                 name="countInStock"
               />
@@ -705,11 +706,7 @@ const AdminProduct = () => {
                 { required: true, message: "Please input your count Price!" },
               ]}
             >
-              <InputComponent
-                value={stateProductDetails.price}
-                onChange={handleOnchangeDetails}
-                name="price"
-              />
+              <InputComponent onChange={handleOnchangeDetails} name="price" />
             </Form.Item>
 
             <Form.Item
@@ -719,11 +716,7 @@ const AdminProduct = () => {
                 { required: true, message: "Please input your count Rating!" },
               ]}
             >
-              <InputComponent
-                value={stateProductDetails.rating}
-                onChange={handleOnchangeDetails}
-                name="rating"
-              />
+              <InputComponent onChange={handleOnchangeDetails} name="rating" />
             </Form.Item>
 
             <Form.Item
@@ -737,7 +730,6 @@ const AdminProduct = () => {
               ]}
             >
               <InputComponent
-                value={stateProductDetails.description}
                 onChange={handleOnchangeDetails}
                 name="description"
               />
@@ -781,7 +773,7 @@ const AdminProduct = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-
+      {/*----------------------Xoá sản phẩm ------------------*/}
       <ModalComponent
         title="Xoá sản phẩm"
         open={isModalopenDelete}
