@@ -81,6 +81,10 @@ const AdminProduct = () => {
     return ProductService.deleteProduct(id, token);
   });
 
+  const mutationDeletedMany = useMutationnHook(({ ids, token }) => {
+    return ProductService.deleteManyProduct({ ids }, token);
+  });
+
   //{======================== getOnProducts====================}
   const getAllProducts = async () => {
     const res = await ProductService.getAllProduct();
@@ -107,9 +111,22 @@ const AdminProduct = () => {
     setIsLoadingUpdate(false);
     return res;
   };
+
   useEffect(() => {
     formUpdate.setFieldsValue(stateProductDetails);
   }, [formUpdate, stateProductDetails]);
+
+  //{======================== handleDetailMany====================}
+  const handleDeleteManyProduct = (ids) => {
+    mutationDeletedMany.mutate(
+      { ids, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryProduct.refetch();
+        },
+      }
+    );
+  };
 
   //{======================== handleDetailProduct====================}
   const handleDetailProduct = async (id) => {
@@ -138,6 +155,13 @@ const AdminProduct = () => {
   } = mutationDeleted;
 
   console.log("dataUpdataUpdateddated", dataUpdated);
+
+  const {
+    data: dataDeletedMany,
+    isPending: isLoadingDeletedMany = false,
+    isSuccess: isSuccessDeletedMany,
+    isError: isErrorDeletedMany,
+  } = mutationDeletedMany;
 
   const queryProduct = useQuery({
     queryKey: ["product"],
@@ -241,21 +265,6 @@ const AdminProduct = () => {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{
-    //         backgroundColor: "#ffc069",
-    //         padding: 0,
-    //       }}
-    //       searchWords={[searchText]}
-    //       autoEscape
-    //       textToHighlight={text ? text.toString() : ""}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
   });
 
   const columns = [
@@ -360,6 +369,14 @@ const AdminProduct = () => {
       message.error("Xoá thất bại");
     }
   }, [isSuccessDeleted, isErrorDeleted]);
+
+  useEffect(() => {
+    if (isSuccessDeletedMany && dataDeletedMany?.status === "SUCCESS") {
+      message.success("Xoá sản phẩm thành công");
+    } else if (isErrorDeletedMany) {
+      message.error("Xoá thất bại");
+    }
+  }, [isSuccessDeletedMany, isErrorDeletedMany]);
 
   const handleCloseDrawer = () => {
     setIsOpenDrawer(false);
@@ -499,6 +516,7 @@ const AdminProduct = () => {
 
       <div style={{ marginTop: "20px" }}>
         <TableComponent
+          handleDeleteMany={handleDeleteManyProduct}
           columns={columns}
           isLoading={isLoadingProduct}
           data={dataTable}

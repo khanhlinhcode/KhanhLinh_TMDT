@@ -37,16 +37,29 @@ function App() {
 
   const handleDecodeToken = () => {
     const storageData = localStorage.getItem("access_token");
+
+    // Nếu token không tồn tại hoặc "undefined" → trả rỗng
+    if (!storageData || storageData === "undefined" || storageData === "null") {
+      return { storageData: null, decoder: {} };
+    }
+
     let decoded = {};
-    if (storageData) {
-      decoded = jwtDecode(storageData); // bỏ kiểm tra isJsonString
+    try {
+      // Chỉ decode nếu token có dạng chuẩn JWT x.y.z
+      if (storageData.split(".").length === 3) {
+        decoded = jwtDecode(storageData);
+      }
+    } catch (error) {
+      console.error("Invalid token decode:", error);
+      localStorage.removeItem("access_token");
+      decoded = {};
     }
     return { storageData, decoder: decoded };
   };
   const handleGetDetailUser = async (id, token) => {
     const res = await UserService.getDetailUser(id, token);
-    console.log("📦 getDetailUser response:", res); // <-- thêm dòng này
-    dispatch(updateUser({ ...res?.data, access_token: token }));
+    console.log("📦 getDetailUser response:", res);
+    dispatch(updateUser({ ...res?.data, access_token: token })); // ← CHỖ NÀY SAI
   };
 
   return (

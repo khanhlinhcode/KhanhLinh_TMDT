@@ -14,7 +14,8 @@ import Loading from "../LoadingComponent/Loading";
 import * as UserService from "../../services/UserService";
 import * as message from "../../components/Message/Message";
 import { useMutationnHook } from "../../hooks/useMutationHook";
-import { WrapperHeader } from "./style";
+import { WrapperHeader, WrapperUploadFile } from "./style";
+import { getBase64 } from "../../utils";
 
 const AdminUser = () => {
   const user = useSelector((state) => state.user);
@@ -32,6 +33,7 @@ const AdminUser = () => {
     email: "",
     phone: "",
     password: "",
+    address: "",
     isAdmin: false,
   });
 
@@ -41,6 +43,8 @@ const AdminUser = () => {
     email: "",
     phone: "",
     isAdmin: false,
+    avatar: "",
+    address: "",
   });
 
   const [form] = Form.useForm();
@@ -66,6 +70,9 @@ const AdminUser = () => {
   const mutationDelete = useMutationnHook((data) =>
     UserService.deleteUser(data.id, data.token)
   );
+  const mutationDeletedMany = useMutationnHook(({ ids, token }) => {
+    return UserService.deleteManyUser({ ids }, token);
+  });
 
   // =============== FETCH USER DETAIL ===============
   const fetchDetailUser = async (id) => {
@@ -80,8 +87,8 @@ const AdminUser = () => {
   };
 
   // =============== CREATE USER ===============
-  const handleCreate = () => {
-    mutationCreate.mutate(stateUser, {
+  const handleCreate = (values) => {
+    mutationCreate.mutate(values, {
       onSuccess: () => {
         message.success("Tạo user thành công");
         handleCancelCreate();
@@ -89,6 +96,14 @@ const AdminUser = () => {
       },
       onError: () => message.error("Tạo user thất bại"),
     });
+  };
+  const handleOnchageAvatar = async ({ fileList }) => {
+    const file = fileList[0];
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setStateUserDetails((prev) => ({ ...prev, avatar: file.preview }));
+    formUpdate.setFieldValue("avatar", file.preview);
   };
 
   const handleCancelCreate = () => {
@@ -105,11 +120,16 @@ const AdminUser = () => {
 
   // =============== UPDATE USER ===============
   const handleUpdate = () => {
+    const values = formUpdate.getFieldsValue(); // lấy giá trị từ form
+
     mutationUpdate.mutate(
       {
         id: rowSelected,
         token: user?.access_token,
-        body: formUpdate.getFieldsValue(),
+        body: {
+          ...values,
+          avatar: values.avatar,
+        },
       },
       {
         onSuccess: () => {
@@ -121,7 +141,6 @@ const AdminUser = () => {
       }
     );
   };
-
   const handleCloseDrawer = () => {
     setIsOpenDrawer(false);
     setStateUserDetails({
@@ -147,6 +166,18 @@ const AdminUser = () => {
       }
     );
   };
+  const handleDeleteManyUser = (ids) => {
+    mutationDeletedMany.mutate(
+      { ids, token: user?.access_token },
+      {
+        onSuccess: () => message.success("Xoá nhiều user thành công"),
+        onError: () => message.error("Xoá nhiều user thất bại"),
+      }
+    );
+  };
+  console.log(mutationDeletedMany.isLoading);
+  console.log(mutationDeletedMany.isSuccess);
+  console.log(mutationDeletedMany.data);
 
   // =============== TABLE ===============
   const renderAction = (record) => (
@@ -215,6 +246,7 @@ const AdminUser = () => {
       {/* TABLE */}
       <div style={{ marginTop: 20 }}>
         <TableComponent
+          handleDeleteMany={handleDeleteManyUser}
           columns={columns}
           data={dataTable}
           isLoading={queryUser.isLoading}
@@ -235,6 +267,7 @@ const AdminUser = () => {
           <Form.Item label="Name" name="name" required>
             <InputComponent
               name="name"
+              value={stateUser.name}
               onChange={(e) =>
                 setStateUser({ ...stateUser, name: e.target.value })
               }
@@ -244,6 +277,7 @@ const AdminUser = () => {
           <Form.Item label="Email" name="email" required>
             <InputComponent
               name="email"
+              value={stateUser.email}
               onChange={(e) =>
                 setStateUser({ ...stateUser, email: e.target.value })
               }
@@ -253,6 +287,7 @@ const AdminUser = () => {
           <Form.Item label="Phone" name="phone" required>
             <InputComponent
               name="phone"
+              value={stateUser.phone}
               onChange={(e) =>
                 setStateUser({ ...stateUser, phone: e.target.value })
               }
@@ -262,6 +297,7 @@ const AdminUser = () => {
           <Form.Item label="Password" name="password" required>
             <InputComponent
               name="password"
+              value={stateUser.password}
               onChange={(e) =>
                 setStateUser({ ...stateUser, password: e.target.value })
               }
@@ -271,8 +307,28 @@ const AdminUser = () => {
           <Form.Item label="isAdmin" name="isAdmin">
             <InputComponent
               name="isAdmin"
+              value={stateUser.isAdmin}
               onChange={(e) =>
                 setStateUser({ ...stateUser, isAdmin: e.target.value })
+              }
+            />
+          </Form.Item>
+
+          <Form.Item label="address" name="address">
+            <InputComponent
+              name="address"
+              value={stateUser.address}
+              onChange={(e) =>
+                setStateUser({ ...stateUser, address: e.target.value })
+              }
+            />
+          </Form.Item>
+          <Form.Item label="avatar" name="avatar">
+            <InputComponent
+              name="avatar"
+              value={stateUser.avatar}
+              onChange={(e) =>
+                setStateUser({ ...stateUser, avatar: e.target.value })
               }
             />
           </Form.Item>
@@ -296,14 +352,41 @@ const AdminUser = () => {
             <Form.Item label="Name" name="name">
               <InputComponent />
             </Form.Item>
+
             <Form.Item label="Email" name="email">
               <InputComponent />
             </Form.Item>
+
             <Form.Item label="Phone" name="phone">
               <InputComponent />
             </Form.Item>
+
+            <Form.Item label="Address" name="address">
+              <InputComponent />
+            </Form.Item>
+
             <Form.Item label="isAdmin" name="isAdmin">
               <InputComponent />
+            </Form.Item>
+
+            <Form.Item label="Avatar" name="avatar">
+              <WrapperUploadFile onChange={handleOnchageAvatar} maxCount={1}>
+                <Button>Select File</Button>
+
+                {stateUserDetails?.avatar && (
+                  <img
+                    src={stateUserDetails.avatar}
+                    alt="avatar"
+                    style={{
+                      height: "60px",
+                      width: "60px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      marginLeft: "10px",
+                    }}
+                  />
+                )}
+              </WrapperUploadFile>
             </Form.Item>
 
             <Button type="primary" htmlType="submit">

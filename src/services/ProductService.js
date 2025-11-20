@@ -73,3 +73,21 @@ export const deleteProduct = async (id, access_token) => {
     throw error;
   }
 };
+
+export const deleteManyProduct = async (data, access_token) => {
+  try {
+    const res = await axios.post (
+      `${process.env.REACT_APP_API_URL}/product/delete-many`,
+      data,
+      {
+        headers: {
+          token: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Logout user error:", error.response?.data);
+    throw error;
+  }
+};
